@@ -1,0 +1,4 @@
+#List domains you want to exclude here:
+local
+localhost
+localhost.localdomain
