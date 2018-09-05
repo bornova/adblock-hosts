@@ -56,8 +56,9 @@ PREFIX = "0.0.0.0"
 
 class startProgram():
     def __init__(self, mode=None):
-        if len(sys.argv) > 2 and not mode:
-            msg("More than 1 argument was used in command line. ")
+        if (args.default and args.unified) and not mode:
+            msg("Both default (-d) and unified (-u) arguments "
+                "were found in command-line.\n")
             args.default = False
             args.unified = False
             self.askUser()
@@ -71,7 +72,6 @@ class startProgram():
         else:
             self.askUser()
             return
-        msg("\nProcess complete.\n")
 
     def askUser(self):
         modes = ["d", "u", "e"]
@@ -392,5 +392,6 @@ class msg():
 if __name__ == "__main__":
     try:
         startProgram()
+        msg("\nProcess complete.\n")
     except KeyboardInterrupt:
         sys.exit("\nProcess aborted.")
