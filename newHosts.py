@@ -91,7 +91,6 @@ class defaultHosts():
     def __init__(self):
         msg("Generating default hosts file...")
         try:
-            self.new_hosts_set = set()
             with open(NEW_HOSTS_FILE, "w+") as f:
                 f.write(HEADER + "\n")
             msg("done.\n\tSaved to: " + NEW_HOSTS_FILE + "\n")
@@ -297,7 +296,7 @@ class implementHosts():
     def __init__(self, cls):
         if WIN and not ADMIN:
             return
-        if self.checkHosts(cls):
+        if self.sameHosts():
             msg("\nNote: Newly generated hosts file is same as the "
                 "existing hosts file.")
             question = ("\nImplement new hosts file "
@@ -317,16 +316,25 @@ class implementHosts():
             msg("Didn't get that. Let's try again...")
             self.askUser(question)
 
-    def checkHosts(self, clss):
+    def sameHosts(self):
         try:
             ex_file_set = set()
+            new_file_set = set()
             with open(HOSTS_FILE, "r") as f:
                 for line in f:
                     if "# Last updated" in line:
                         for line in f:
-                            if not line.startswith("#"):
+                            if line.strip() and not line.startswith("#"):
                                 ex_file_set.add(line.split()[1])
-            if ex_file_set == clss.new_hosts_set:
+
+            with open(NEW_HOSTS_FILE, "r") as f:
+                for line in f:
+                    if "# Last updated" in line:
+                        for line in f:
+                            if line.strip() and not line.startswith("#"):
+                                new_file_set.add(line.split()[1])
+
+            if ex_file_set == new_file_set:
                 return True
         except:
             return False
