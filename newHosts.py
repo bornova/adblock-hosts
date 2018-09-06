@@ -74,12 +74,12 @@ class startProgram():
             return
 
     def askUser(self):
-        modes = ["d", "u", "e"]
         question = ("Please enter:\n"
                     "\t'd' for the default hosts file\n"
                     "\t'u' for a new unified hosts file\n"
                     "\t'e' to exit the program\n> ")
         answer = input(question).strip().lower()
+        modes = ["d", "u", "e"]
         if answer in modes:
             startProgram(answer)
         else:
@@ -189,6 +189,7 @@ class unifiedHosts():
             a_spc = term_size - prog_spc - len(tab)
             if a_spc > self.col_max:
                 a_spc = self.col_max
+
             if len(url) > a_spc:
                 dots = "..."
                 offset = a_spc - len(dots)
@@ -220,6 +221,7 @@ class unifiedHosts():
                     size = "{0:,.0f} KB".format(length/1024)
                 except:
                     size = "??? KB"
+
                 while True:
                     buffer = content.read(byte_size)
                     bytes_down += len(buffer)
@@ -228,6 +230,7 @@ class unifiedHosts():
                         break
                     prog = "{0:,.0f} KB".format(bytes_down/1024) + "/" + size
                     msg(self.urlStr(url, url_c, prog))
+
                 download = io.BytesIO(b"".join(data))
                 msg(self.urlStr(url, url_c, "Processing..."))
                 self.processDownload(download)
@@ -268,6 +271,7 @@ class unifiedHosts():
                 if (line not in self.blacklist and
                         line not in self.whitelist_set):
                     self.new_hosts_set.add(line)
+
             nhs_c = str(len(self.new_hosts_set))
             wls_c = str(len(self.whitelist_set))
             bls_c = str(self.blacklist_c)
@@ -296,27 +300,35 @@ class implementHosts():
     def __init__(self, cls):
         if WIN and not ADMIN:
             return
-        if self.sameHosts():
-            msg("\nNote: Newly generated hosts file is same as the "
-                "existing hosts file.")
-            question = ("\nImplement new hosts file "
-                        "anyway (requires admin/root privileges)? (y/n): ")
         else:
-            question = ("\nImplement new hosts file now? "
-                        "(requires admin/root privileges) (y/n): ")
-        self.askUser(question)
+            if self.noChange():
+                msg("\nNote: Newly generated hosts file is same as the "
+                    "existing hosts file.")
+                question = ("\nImplement new hosts file "
+                            "anyway (requires admin/root privileges)? (y/n): ")
+            else:
+                question = ("\nImplement new hosts file now? "
+                            "(requires admin/root privileges) (y/n): ")
+
+            self.askUser(question)
 
     def askUser(self, question):
         answer = input(question).strip().lower()
         if answer == "y":
-            self.implementNow()
+            if MAC:
+                if call(["sudo", "cd"]):
+                    msg("\nCould not implement hosts file automatically."
+                        " Please try implementing it manually.\n")
+                    return
+            self.backupHosts()
+            self.replaceHosts()
         elif answer == "n":
             return
         else:
             msg("Didn't get that. Let's try again...")
             self.askUser(question)
 
-    def sameHosts(self):
+    def noChange(self):
         try:
             ex_file_set = set()
             new_file_set = set()
@@ -338,15 +350,6 @@ class implementHosts():
                 return True
         except:
             return False
-
-    def implementNow(self):
-        if MAC:
-            if call(["sudo", "cd"]):
-                msg("\nCould not implement hosts file automatically."
-                    " Please try implementing it manually.\n")
-                return
-        self.backupHosts()
-        self.replaceHosts()
 
     def backupHosts(self):
         question = "Backup existing hosts file? (y/n): "
