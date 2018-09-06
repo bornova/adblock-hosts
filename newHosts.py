@@ -62,7 +62,6 @@ class startProgram():
             args.default = False
             args.unified = False
             self.askUser()
-            return
         elif args.default or mode == "d":
             implementHosts(defaultHosts())
         elif args.unified or mode == "u":
@@ -71,7 +70,6 @@ class startProgram():
             sys.exit("Exiting...")
         else:
             self.askUser()
-            return
 
     def askUser(self):
         question = ("Please enter:\n"
@@ -208,7 +206,7 @@ class unifiedHosts():
         url_c = 0
         err_c = 0
         for url in self.sources:
-            self.dom_count = set()
+            self.domain_c = set()
             data = []
             byte_size = 1024
             bytes_down = 0
@@ -234,7 +232,7 @@ class unifiedHosts():
                 download = io.BytesIO(b"".join(data))
                 msg(self.urlStr(url, url_c, "Processing..."))
                 self.processDownload(download)
-                prog = str(len(self.dom_count)) + " domains"
+                prog = str(len(self.domain_c)) + " domains"
                 msg(self.urlStr(url, url_c, prog))
             except Exception as e:
                 err_c += 1
@@ -254,7 +252,7 @@ class unifiedHosts():
                     if line_ip in IP_LIST and line_url not in IP_LIST:
                         line = urlparse("//" + line_url).netloc
                         line = line.encode("idna").decode("utf-8")
-                        self.dom_count.add(line)
+                        self.domain_c.add(line)
                         self.download_set.add(line)
             except:
                 pass
@@ -331,17 +329,17 @@ class implementHosts():
     def noChange(self):
         try:
             ex_file_set = set()
-            new_file_set = set()
             with open(HOSTS_FILE, "r") as f:
                 for line in f:
-                    if "# Last updated" in line:
+                    if "# Last updated:" in line:
                         for line in f:
                             if line.strip() and not line.startswith("#"):
                                 ex_file_set.add(line.split()[1])
 
+            new_file_set = set()
             with open(NEW_HOSTS_FILE, "r") as f:
                 for line in f:
-                    if "# Last updated" in line:
+                    if "# Last updated:" in line:
                         for line in f:
                             if line.strip() and not line.startswith("#"):
                                 new_file_set.add(line.split()[1])
