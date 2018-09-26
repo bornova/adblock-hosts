@@ -1,8 +1,8 @@
 # Unified Hosts File Generator
 
-The inspiration behind this project was the [StevenBlack/hosts repository](https://github.com/StevenBlack/hosts). Special thanks to everyone working hard to make it the awesome tool that it is.  However, I wanted something simpler and I wanted to be able to combine different hosts files into one unified file in an organized manner without all the comments, empty lines and whitespace. At the same time, I needed a quick way to switch between the unified hosts file and the default one that comes with the OS.
+The inspiration behind this project was the [StevenBlack/hosts repository](https://github.com/StevenBlack/hosts). Special thanks to everyone working hard to make it the awesome tool that it is.
 
-Please note this program currently only works on Windows and macOS. It requires Python 3.x to run.
+Please note this program currently only works on Windows and macOS. It requires Python 3.x.
 
 ## How it works
 
@@ -22,9 +22,13 @@ This is where you would list links to hosts files you want to include in the fin
 
 This is where the default hosts files are kept for both Windows and macOS.  The contents of these files will be inserted at the top of the unified hosts file depending on your operating system.  These files will also be used when you want to revert back to the original hosts file.  I suggest not modifying these.
 
+### custom
+
+You can add custom entries to this list.  These entries will be written to the unified host file as is.  Meaning no host IP (0.0.0.0) will be appended at the beginning of the line. For example, this would be a good place to put static hosts entries such as "ff02::3 ip6-allhosts".
+
 ### blacklist
 
-These are custom domains you would like to block. You can list one domain per line. Note that if an item on this list matches an item in the downloaded hosts files, then it will be ignored since it will already be included in the unified hosts file.
+These are domains you would like to block. You can list one domain per line. Note that if an item on this list matches an item in the custom list or the downloaded hosts files, then it will be ignored since it will already be included in the unified hosts file.
 
 ### whitelist
 
