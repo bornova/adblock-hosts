@@ -342,7 +342,7 @@ class unifiedHosts():
 
 class implementHosts():
     def __init__(self, cls):
-        if WIN and ADMIN:
+        if WIN and not ADMIN:
             return
         else:
             if self.noChange():
