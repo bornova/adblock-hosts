@@ -27,6 +27,7 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 SOURCES_FILE = os.path.join(PATH, "sources")
 BLACKLIST_FILE = os.path.join(PATH, "blacklist")
 WHITELIST_FILE = os.path.join(PATH, "whitelist")
+CUSTOM_FILE = os.path.join(PATH, "custom")
 NEW_HOSTS_FILE = os.path.join(PATH, "hosts")
 BACKUP_DIR = os.path.join(PATH + "/backups/")
 BACKUP_FILE = os.path.join(PATH + "/backups", DTB + ".bak")
@@ -51,6 +52,7 @@ with open(DEFAULT_HOSTS, "r") as f:
     HEADER = f.read().strip()
 
 IP_LIST = ["127.0.0.1", "0.0.0.0"]
+SKIP_LIST = ["local", "localhost", "localhost.localdomain"]
 PREFIX = "0.0.0.0"
 
 
@@ -101,6 +103,8 @@ class unifiedHosts():
         self.sources = []
         self.blacklist = set()
         self.whitelist = set()
+        self.customlist = set()
+        self.customlist_dom = set()
         self.sw_set = set()
         self.ew_set = set()
         self.in_set = set()
@@ -139,15 +143,41 @@ class unifiedHosts():
             else:
                 msg("failed. ('sources' file is missing.)", 0)
 
-            msg("\tBlacklist...")
-            if os.path.exists(BLACKLIST_FILE):
-                with open(BLACKLIST_FILE, "r") as f:
+            msg("\tCustom list...")
+            if os.path.exists(CUSTOM_FILE):
+                with open(CUSTOM_FILE, "r") as f:
                     for line in f:
                         line = line.strip().lower()
                         if line and not line.startswith("#"):
+                            try:
+                                line_dom = line.split()[1]
+                            except:
+                                line_dom = line
+                            self.customlist_dom.add(line_dom)
+                            self.customlist.add(line)
+                self.customlist_c = len(self.customlist)
+                msg("ok (" + str(self.customlist_c) + " entries)\n")
+            else:
+                msg("failed. ('custom' file is missing.)\n")
+
+            msg("\tBlacklist...")
+            if os.path.exists(BLACKLIST_FILE):
+                with open(BLACKLIST_FILE, "r") as f:
+                    ignored = set()
+                    for line in f:
+                        line = line.strip().lower()
+                        if (line and not line.startswith("#") and
+                                line not in self.customlist_dom):
                             self.blacklist.add(line)
+                        elif line in self.customlist_dom:
+                            ignored.add(line)
+                ignored_c = len(ignored)
+                if ignored_c > 0:
+                    im = ", " + str(ignored_c) + " ignored"
+                else:
+                    im = ""
                 self.blacklist_c = len(self.blacklist)
-                msg("ok (" + str(self.blacklist_c) + " entries)\n")
+                msg("ok (" + str(self.blacklist_c) + " entries" + im + ")\n")
             else:
                 msg("failed. ('blacklist' file is missing.)\n")
 
@@ -156,8 +186,16 @@ class unifiedHosts():
                 with open(WHITELIST_FILE, "r") as f:
                     for line in f:
                         line = line.strip().lower()
-                        if line and not line.startswith("#"):
+                        if (line and not line.startswith("#") and
+                                line not in self.customlist_dom):
                             self.whitelist.add(line)
+                        elif line in self.customlist_dom:
+                            ignored.add(line)
+                ignored_c = len(ignored)
+                if ignored_c > 0:
+                    im = ", " + str(ignored_c) + " ignored"
+                else:
+                    im = ""
                 self.whitelist_c = len(self.whitelist)
                 for line in self.whitelist:
                     if line.startswith("*") and line.endswith("*"):
@@ -171,9 +209,10 @@ class unifiedHosts():
                         self.ew_set.add(line)
                     elif line:
                         self.eq_set.add(line)
-                msg("ok (" + str(self.whitelist_c) + " entries)\n")
+                msg("ok (" + str(self.whitelist_c) + " entries" + im + ")\n")
             else:
                 msg("failed. ('whitelist' file is missing.)\n")
+
         except Exception as e:
             msg("failed. (" + str(e) + ")", 0)
 
@@ -267,15 +306,21 @@ class unifiedHosts():
                         line in self.eq_set):
                     self.whitelist_set.add(line)
                 if (line not in self.blacklist and
-                        line not in self.whitelist_set):
+                        line not in self.whitelist_set and
+                        line not in self.customlist_dom and
+                        line not in SKIP_LIST):
                     self.new_hosts_set.add(line)
 
             nhs_c = str(len(self.new_hosts_set))
             wls_c = str(len(self.whitelist_set))
             bls_c = str(self.blacklist_c)
+            cst_c = str(self.customlist_c)
             with open(NEW_HOSTS_FILE, "w+") as f:
                 f.write(HEADER + "\n\n## Begin unified hosts file ##")
                 f.write("\n# Last updated: " + DT + "\n")
+                f.write("\n# Custom entries (" + cst_c + "):\n")
+                for line in sorted(self.customlist):
+                    f.write(line + "\n")
                 f.write("\n# Blacklisted domains (" + bls_c + "):\n")
                 for line in sorted(self.blacklist):
                     f.write(PREFIX + " " + line + "\n")
@@ -288,6 +333,7 @@ class unifiedHosts():
                 f.write("## End unified hosts file ##")
             msg("done.\n\tSaved to: " + NEW_HOSTS_FILE + "\n\n")
             msg("\tBlocked " + nhs_c + " unique domains.\n"
+                "\tAdded " + cst_c + " custom entries.\n"
                 "\tBlacklisted " + bls_c + " domains.\n"
                 "\tWhitelisted " + wls_c + " domains.\n")
         except Exception as e:
@@ -296,7 +342,7 @@ class unifiedHosts():
 
 class implementHosts():
     def __init__(self, cls):
-        if WIN and not ADMIN:
+        if WIN and ADMIN:
             return
         else:
             if self.noChange():
@@ -344,8 +390,7 @@ class implementHosts():
                             if line.strip() and not line.startswith("#"):
                                 new_file_set.add(line.split()[1])
 
-            if ex_file_set == new_file_set:
-                return True
+            return(ex_file_set == new_file_set)
         except:
             return False
 
