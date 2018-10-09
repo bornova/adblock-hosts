@@ -330,7 +330,7 @@ class unifiedHosts():
                 f.write("\n# Blocked domains (" + nhs_c + "):\n")
                 for line in sorted(self.new_hosts_set):
                     f.write(PREFIX + " " + line + "\n")
-                f.write("## End adBlock hosts file ##")
+                f.write("## End adBlock hosts file ##\n")
             msg("done.\n\tSaved to: " + NEW_HOSTS_FILE + "\n\n")
             msg("\tBlocked " + nhs_c + " unique domains.\n"
                 "\tAdded " + cst_c + " custom entries.\n"
