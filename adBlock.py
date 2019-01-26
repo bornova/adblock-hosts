@@ -55,6 +55,8 @@ IP_LIST = ["127.0.0.1", "0.0.0.0"]
 SKIP_LIST = ["local", "localhost", "localhost.localdomain"]
 PREFIX = "0.0.0.0"
 
+tab = " "*4
+
 
 class startProgram():
     def __init__(self, mode=None):
@@ -75,9 +77,9 @@ class startProgram():
 
     def askUser(self):
         question = ("Please enter:\n"
-                    "\t'a' for a new adBlock hosts file\n"
-                    "\t'd' for the default hosts file\n"
-                    "\t'e' to exit the program\n> ")
+                    + tab + "'a' for a new adBlock hosts file\n"
+                    + tab + "'d' for the default hosts file\n"
+                    + tab + "'e' to exit the program\n> ")
         answer = input(question).strip().lower()
         modes = ["d", "a", "e"]
         if answer in modes:
@@ -120,7 +122,7 @@ class unifiedHosts():
     def processLists(self):
         msg("Processing:\n")
         try:
-            msg("\tSources.....")
+            msg(tab + "Sources.....")
             if os.path.exists(SOURCES_FILE):
                 with open(SOURCES_FILE, "r") as f:
                     seen = set()
@@ -143,7 +145,7 @@ class unifiedHosts():
             else:
                 msg("failed. ('sources' file is missing.)", 0)
 
-            msg("\tCustom list...")
+            msg(tab + "Custom list...")
             if os.path.exists(CUSTOM_FILE):
                 with open(CUSTOM_FILE, "r") as f:
                     for line in f:
@@ -160,7 +162,7 @@ class unifiedHosts():
             else:
                 msg("failed. ('custom' file is missing.)\n")
 
-            msg("\tBlacklist...")
+            msg(tab + "Blacklist...")
             if os.path.exists(BLACKLIST_FILE):
                 with open(BLACKLIST_FILE, "r") as f:
                     ignored = set()
@@ -181,7 +183,7 @@ class unifiedHosts():
             else:
                 msg("failed. ('blacklist' file is missing.)\n")
 
-            msg("\tWhitelist...")
+            msg(tab + "Whitelist...")
             if os.path.exists(WHITELIST_FILE):
                 with open(WHITELIST_FILE, "r") as f:
                     for line in f:
@@ -218,7 +220,7 @@ class unifiedHosts():
 
     def urlStr(self, url, url_c, prog=""):
         spc = 1
-        tab = " "*8
+        tab = " "*4
         prog_spc = 25
         try:
             offset = self.col_max
@@ -331,11 +333,11 @@ class unifiedHosts():
                 for line in sorted(self.new_hosts_set):
                     f.write(PREFIX + " " + line + "\n")
                 f.write("## End adBlock hosts file ##\n")
-            msg("done.\n\tSaved to: " + NEW_HOSTS_FILE + "\n\n")
-            msg("\tBlocked " + nhs_c + " unique domains.\n"
-                "\tAdded " + cst_c + " custom entries.\n"
-                "\tBlacklisted " + bls_c + " domains.\n"
-                "\tWhitelisted " + wls_c + " domains.\n")
+            msg("done.\n" + tab + "Saved to: " + NEW_HOSTS_FILE + "\n\n")
+            msg(tab + "Blocked " + nhs_c + " unique domains.\n"
+                + tab + "Added " + cst_c + " custom entries.\n"
+                + tab + "Blacklisted " + bls_c + " domains.\n"
+                + tab + "Whitelisted " + wls_c + " domains.\n")
         except Exception as e:
             msg("failed.\n\t" + str(e), 0)
 
@@ -401,9 +403,9 @@ class implementHosts():
                 if not os.path.exists(BACKUP_DIR):
                     os.makedirs(BACKUP_DIR)
                 copyfile(HOSTS_FILE, BACKUP_FILE)
-                msg("\tBackup saved to: " + BACKUP_FILE + "\n")
+                msg(tab + "Backup saved to: " + BACKUP_FILE + "\n")
             except Exception as e:
-                msg("\tBackup failed. (" + str(e) + ")\n")
+                msg(tab + "Backup failed. (" + str(e) + ")\n")
         elif answer == "n":
             return
         else:
