@@ -220,7 +220,6 @@ class unifiedHosts():
 
     def urlStr(self, url, url_c, prog=""):
         spc = 1
-        tab = " "*4
         prog_spc = 25
         try:
             offset = self.col_max
