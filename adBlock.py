@@ -16,7 +16,7 @@ if not sys.version_info >= (3, 0):
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--default", help="Generate the default hosts file.",
                     action="store_true")
-parser.add_argument("-a", "--adblock", help="Generate new adBlock hosts file.",
+parser.add_argument("-n", "--new", help="Generate new adBlock hosts file.",
                     action="store_true")
 args = parser.parse_args()
 
@@ -58,18 +58,18 @@ PREFIX = "0.0.0.0"
 tab = " "*4
 
 
-class startProgram():
+class adBlock():
     def __init__(self, mode=None):
-        if (args.default and args.adblock) and not mode:
-            msg("Both default (-d) and adBlock (-a) arguments "
+        if (args.default and args.new) and not mode:
+            msg("Both default (-d) and new (-n) arguments "
                 "were found in command-line.\n")
             args.default = False
-            args.adblock = False
+            args.new = False
             self.askUser()
+        elif args.new or mode == "n":
+            implementHosts(unifiedHosts())
         elif args.default or mode == "d":
             implementHosts(defaultHosts())
-        elif args.adblock or mode == "a":
-            implementHosts(unifiedHosts())
         elif mode == "e":
             sys.exit("Exiting...")
         else:
@@ -77,13 +77,13 @@ class startProgram():
 
     def askUser(self):
         question = ("Please enter:\n"
-                    + tab + "'a' for a new adBlock hosts file\n"
+                    + tab + "'n' for a new adBlock hosts file\n"
                     + tab + "'d' for the default hosts file\n"
                     + tab + "'e' to exit the program\n> ")
         answer = input(question).strip().lower()
-        modes = ["d", "a", "e"]
+        modes = ["n", "d", "e"]
         if answer in modes:
-            startProgram(answer)
+            adBlock(answer)
         else:
             msg("Didn't get that. Let's try again...")
             self.askUser()
@@ -445,7 +445,7 @@ class msg():
 
 if __name__ == "__main__":
     try:
-        startProgram()
+        adBlock()
         msg("\nProcess complete.\n")
     except KeyboardInterrupt:
         sys.exit("\nProcess aborted.")
