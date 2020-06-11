@@ -58,7 +58,7 @@ or depending on the python setup:
 
 Modes (use only one):
 
-`-a` or `--adblock`: Generate new adBlock hosts file
+`-n` or `--new`: Generate new adBlock hosts file
 
 `-d` or `--default`: Generate the default hosts file
 
