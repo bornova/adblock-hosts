@@ -14,9 +14,9 @@ if not sys.version_info >= (3, 0):
     sys.exit("Python 2 is not supported. Exiting...")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--default", help="Generate the default hosts file.",
+parser.add_argument("-d", "--default", help="Restore the default hosts file.",
                     action="store_true")
-parser.add_argument("-n", "--new", help="Generate new adBlock hosts file.",
+parser.add_argument("-n", "--new", help="Generate a new adBlock hosts file.",
                     action="store_true")
 args = parser.parse_args()
 
@@ -77,8 +77,8 @@ class adBlock():
 
     def askUser(self):
         question = ("Please enter:\n"
-                    + tab + "'n' for a new adBlock hosts file\n"
-                    + tab + "'d' for the default hosts file\n"
+                    + tab + "'n' to generate a new adBlock hosts file\n"
+                    + tab + "'d' to restore the default hosts file\n"
                     + tab + "'e' to exit the program\n> ")
         answer = input(question).strip().lower()
         modes = ["n", "d", "e"]
