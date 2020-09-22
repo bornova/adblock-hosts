@@ -6,7 +6,7 @@ Please note this program currently only works on Windows and macOS. It requires 
 
 ## How it works
 
-When you run adBlock.py, it will ask if you want to create a new hosts file or the default hosts file. (You can alternatively use command line options to automate this process.  Please see the [usage section](#usage) below.) If you choose new adBlock (a), the script will download each hosts file listed in the 'sources' file and combine them. It will remove all duplicate lines, comments, and whitespace, then sort each line in alphabetical order. If you choose default (d) option, the script will generate the default hosts file for your OS.
+When you run adBlock.py, it will ask if you want to create a new hosts file or the default hosts file. (You can alternatively use command line options to automate this process.  Please see the [usage section](#usage) below.) If you choose new adBlock (n), the script will download each hosts file listed in the 'sources' file and combine them. It will remove all duplicate lines, comments, and whitespace, then sort each line in alphabetical order. If you choose default (d) option, the script will generate the default hosts file for your OS.
 
 In both cases, the generated hosts file will be saved as 'hosts' in the same folder as the script.
 
