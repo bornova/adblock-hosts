@@ -2,7 +2,7 @@
 
 The inspiration behind this project was the [StevenBlack/hosts repository](https://github.com/StevenBlack/hosts). Special thanks to everyone working hard to make it the awesome tool that it is.
 
-Please note this program currently only works on Windows and macOS. It requires Python 3.x.
+Please note this program was tested only on Windows and macOS. It requires Python 3.x.
 
 ## How it works
 
