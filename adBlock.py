@@ -243,6 +243,7 @@ class unifiedHosts():
 
     def downloadHosts(self):
         msg("\nDownloading from following source(s):\n")
+        clear_prog = 20
         url_c = 0
         err_c = 0
         for url in self.sources:
@@ -270,6 +271,7 @@ class unifiedHosts():
                     msg(self.urlStr(url, url_c, prog))
 
                 download = io.BytesIO(b"".join(data))
+                msg(self.urlStr(url, url_c, " "*clear_prog))
                 msg(self.urlStr(url, url_c, "Processing..."))
                 self.processDownload(download)
                 prog = str(len(self.domain_c)) + " domains"
