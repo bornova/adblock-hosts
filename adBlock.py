@@ -14,10 +14,8 @@ if not sys.version_info >= (3, 0):
     sys.exit("Python 2 is not supported. Exiting...")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--default", help="Restore the default hosts file.",
-                    action="store_true")
-parser.add_argument("-n", "--new", help="Generate a new adBlock hosts file.",
-                    action="store_true")
+parser.add_argument("-d", "--default", help="Restore the default hosts file.", action="store_true")
+parser.add_argument("-n", "--new", help="Generate a new adBlock hosts file.", action="store_true")
 args = parser.parse_args()
 
 DT = time.strftime("%b %d, %Y %H:%M:%S %Z")
@@ -349,13 +347,10 @@ class implementHosts():
             return
         else:
             if self.noChange():
-                msg("\nNote: Newly generated hosts file is same as the "
-                    "existing hosts file.")
-                question = ("\nImplement new hosts file "
-                            "anyway (requires admin/root privileges)? (y/n): ")
+                msg("\nNote: Newly generated hosts file is same as the existing hosts file.")
+                question = ("\nImplement new hosts file anyway (requires admin/root privileges)? (y/n): ")
             else:
-                question = ("\nImplement new hosts file now? "
-                            "(requires admin/root privileges) (y/n): ")
+                question = ("\nImplement new hosts file now? (requires admin/root privileges) (y/n): ")
             self.askUser(question)
 
     def askUser(self, question):
@@ -363,8 +358,7 @@ class implementHosts():
         if answer == "y":
             if MAC:
                 if call(["sudo", "cd"]):
-                    msg("\nCould not implement hosts file automatically."
-                        " Please try implementing it manually.\n")
+                    msg("\nCould not implement hosts file automatically. Please try implementing it manually.\n")
                     return
             self.backupHosts()
             self.replaceHosts()
